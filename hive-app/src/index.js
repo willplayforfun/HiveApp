@@ -5,7 +5,7 @@ import './index.css';
 import TicTacToeGame from './TicTacToe'
 
 
-//ReactDOM.render(<TicTacToeGame />, document.getElementById('root'));
+ReactDOM.render(<TicTacToeGame />, document.getElementById('root'));
 
 // import * as serviceWorker from './serviceWorker';
 // If you want your app to work offline and load faster, you can change
