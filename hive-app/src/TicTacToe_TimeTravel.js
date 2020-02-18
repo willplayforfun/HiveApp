@@ -101,27 +101,29 @@ class TicTacToeGameWithTimeTravel extends React.Component
 		super(props);
 		
 		this.state = {
-			nextPlayer: 0,
-			history: [this.generateHistoryEntryFromBoard(Array(9).fill(null))],
+			history: [this.generateHistoryEntryFromBoard(Array(9).fill(null), 0)],
 			currentlyViewedIndex: 0,
 		};
 	}
 	
-	generateHistoryEntryFromBoard(board)
+	generateHistoryEntryFromBoard(board, inNextPlayer)
 	{
-		return {boardState: board};
+		return {boardState: board, nextPlayer: inNextPlayer};
 	}
 	
 	getBoard(index)
 	{
-		console.log(this.state.history);
-		console.log(index);
 		return this.state.history[index].boardState;
 	}
 	
 	getCurrentBoard()
 	{
 		return this.getBoard(this.state.history.length - 1);
+	}
+	
+	getViewedNextPlayer()
+	{
+		return this.state.history[this.state.currentlyViewedIndex].nextPlayer;
 	}
 	
 	getViewedBoard()
@@ -132,7 +134,7 @@ class TicTacToeGameWithTimeTravel extends React.Component
 	handleTimeTravel(index)
 	{
 		this.setState({
-			currentlyViewedIndex: index ,
+			currentlyViewedIndex: index,
 		});
 	}
 	
@@ -140,7 +142,6 @@ class TicTacToeGameWithTimeTravel extends React.Component
 	handleClick(i) 
 	{
 		const viewedBoard = this.getViewedBoard();
-		//console.log(viewedBoard);
 		
 		// ignore if:
 		// the square is filled
@@ -160,12 +161,12 @@ class TicTacToeGameWithTimeTravel extends React.Component
 		// 		- easy/centralized change detection
 		// 		- "pure components", meaning we can limit the extent of our DOM refresh
 		const newBoard = viewedBoard.slice();
-		newBoard[i] = getSymbolForPlayer(this.state.nextPlayer);
+		const viewedNextPlayer = this.getViewedNextPlayer();
+		newBoard[i] = getSymbolForPlayer(viewedNextPlayer);
 		
 		this.setState({
-			nextPlayer: (this.state.nextPlayer + 1) % 2,
 			history: this.state.history.slice(0, this.state.currentlyViewedIndex + 1)
-				.concat(this.generateHistoryEntryFromBoard(newBoard)),
+				.concat(this.generateHistoryEntryFromBoard(newBoard, (viewedNextPlayer + 1) % 2)),
 			currentlyViewedIndex: this.state.currentlyViewedIndex + 1,
 		});
 	}
@@ -197,7 +198,7 @@ class TicTacToeGameWithTimeTravel extends React.Component
 			);
 		});
 		
-		const winner = calculateWinner(this.getCurrentBoard());
+		const winner = calculateWinner(this.getViewedBoard());
 		let status;
 		if (winner)
 		{
@@ -205,7 +206,7 @@ class TicTacToeGameWithTimeTravel extends React.Component
 		}
 		else
 		{
-			status = "Next player: " + getSymbolForPlayer(this.state.nextPlayer);
+			status = "Next player: " + getSymbolForPlayer(this.getViewedNextPlayer());
 		}
 
 		return (
