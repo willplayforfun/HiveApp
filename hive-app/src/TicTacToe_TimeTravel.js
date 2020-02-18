@@ -60,71 +60,20 @@ function Square(props)
 }
 
 
-class Board extends React.Component 
+class Board extends React.PureComponent 
 {
-	constructor(props) 
-	{
-		super(props);
-		
-		this.state = {
-			board: Array(9).fill(null),
-			nextPlayer: 0,
-		};
-	}
-	
-	// convention dictates that on[Event] from the child gets handled by handle[Event] 
-	handleClick(i) 
-	{		
-		// ignore if:
-		// the square is filled
-		if (this.state.board[i])
-		{
-			return;
-		}
-		// or the game is over
-		if (calculateWinner(this.state.board))
-		{
-			return;
-		}
-		
-	
-		// create a copy of the array with slice(), because we like data immutability
-		// this gets us: 
-		// 		- undo/redo functionality
-		// 		- easy/centralized change detection
-		// 		- "pure components", meaning we can limit the extent of our DOM refresh
-		const board = this.state.board.slice();
-		board[i] = getSymbolForPlayer(this.state.nextPlayer);
-		this.setState({
-			board: board,
-			nextPlayer: (this.state.nextPlayer + 1) % 2,
-		});
-	}
-	
 	renderSquare(i) 
 	{
 		return <Square 
-						value={this.state.board[i]} 
-						onClicked={()=>this.handleClick(i)}
+						value={this.props.boardState[i]} 
+						onClicked={()=>this.props.onClick(i)}
 					/>;
 	}
 
 	render() 
 	{
-		const winner = calculateWinner(this.state.board);
-		let status;
-		if (winner)
-		{
-			status = "Winner: " + winner;
-		}
-		else
-		{
-			status = "Next player: " + getSymbolForPlayer(this.state.nextPlayer);
-		}
-
 		return (
 			<div>
-				<div className="status">{status}</div>
 				<div className="board-row">
 					{this.renderSquare(0)}
 					{this.renderSquare(1)}
@@ -145,17 +94,131 @@ class Board extends React.Component
 	}
 }
 
-class TicTacToeGame extends React.Component 
+class TicTacToeGameWithTimeTravel extends React.Component 
 {
-	render() {
+	constructor(props)
+	{
+		super(props);
+		
+		this.state = {
+			nextPlayer: 0,
+			history: [this.generateHistoryEntryFromBoard(Array(9).fill(null))],
+			currentlyViewedIndex: 0,
+		};
+	}
+	
+	generateHistoryEntryFromBoard(board)
+	{
+		return {boardState: board};
+	}
+	
+	getBoard(index)
+	{
+		console.log(this.state.history);
+		console.log(index);
+		return this.state.history[index].boardState;
+	}
+	
+	getCurrentBoard()
+	{
+		return this.getBoard(this.state.history.length - 1);
+	}
+	
+	getViewedBoard()
+	{
+		return this.getBoard(this.state.currentlyViewedIndex);
+	}
+	
+	handleTimeTravel(index)
+	{
+		this.setState({
+			currentlyViewedIndex: index ,
+		});
+	}
+	
+	// convention dictates that on[Event] from the child gets handled by handle[Event] 
+	handleClick(i) 
+	{
+		const viewedBoard = this.getViewedBoard();
+		//console.log(viewedBoard);
+		
+		// ignore if:
+		// the square is filled
+		if (viewedBoard[i])
+		{
+			return;
+		}
+		// or the game is over
+		if (calculateWinner(viewedBoard))
+		{
+			return;
+		}
+		
+		// create a copy of the array with slice(), because we like data immutability
+		// this gets us: 
+		// 		- undo/redo functionality
+		// 		- easy/centralized change detection
+		// 		- "pure components", meaning we can limit the extent of our DOM refresh
+		const newBoard = viewedBoard.slice();
+		newBoard[i] = getSymbolForPlayer(this.state.nextPlayer);
+		
+		this.setState({
+			nextPlayer: (this.state.nextPlayer + 1) % 2,
+			history: this.state.history.slice(0, this.state.currentlyViewedIndex + 1)
+				.concat(this.generateHistoryEntryFromBoard(newBoard)),
+			currentlyViewedIndex: this.state.currentlyViewedIndex + 1,
+		});
+	}
+	
+	render() 
+	{
+		const historyElements = this.state.history.map((entry, move) => 
+		{
+			const winner = calculateWinner(entry.boardState);
+			
+			let description;
+			if (winner)
+			{
+				description = "Winner: " + winner;
+			}
+			else if(move === 0)
+			{
+				description = "Start";
+			}
+			else
+			{
+				description = "Move: " + move;
+			}
+			
+			return (
+				<li key={move}>
+					<button onClick={() => this.handleTimeTravel(move)}>{description}</button>
+				</li>
+			);
+		});
+		
+		const winner = calculateWinner(this.getCurrentBoard());
+		let status;
+		if (winner)
+		{
+			status = "Winner: " + winner;
+		}
+		else
+		{
+			status = "Next player: " + getSymbolForPlayer(this.state.nextPlayer);
+		}
+
 		return (
 			<div className="game">
 				<div className="game-board">
-					<Board />
+					<Board 
+						boardState={this.getViewedBoard()}
+						onClick={(i) => this.handleClick(i)}
+					/>
 				</div>
 				<div className="game-info">
-					<div>{/* status */}</div>
-					<ol>{/* TODO */}</ol>
+					<div className="status">{status}</div>
+					<ol>{historyElements}</ol>
 				</div>
 			</div>
 		);
@@ -174,6 +237,11 @@ function getSymbolForPlayer(playerIndex)
 	
 function calculateWinner(boardState)
 {
+	if (!boardState)
+	{
+		return null;
+	}
+	
 	const lines = [
 		[0, 1, 2],
 		[3, 4, 5],
@@ -202,4 +270,4 @@ function calculateWinner(boardState)
 	return null;
 }
 
-export default TicTacToeGame;
+export default TicTacToeGameWithTimeTravel;
