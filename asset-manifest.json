@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/HiveApp/static/css/main.4ccff3af.chunk.css",
+    "main.js": "/HiveApp/static/js/main.ceb98755.chunk.js",
+    "main.js.map": "/HiveApp/static/js/main.ceb98755.chunk.js.map",
+    "runtime-main.js": "/HiveApp/static/js/runtime-main.29486137.js",
+    "runtime-main.js.map": "/HiveApp/static/js/runtime-main.29486137.js.map",
+    "static/js/2.b83b218d.chunk.js": "/HiveApp/static/js/2.b83b218d.chunk.js",
+    "static/js/2.b83b218d.chunk.js.map": "/HiveApp/static/js/2.b83b218d.chunk.js.map",
+    "index.html": "/HiveApp/index.html",
+    "precache-manifest.d8369cf058f13db5d683a609538e48f8.js": "/HiveApp/precache-manifest.d8369cf058f13db5d683a609538e48f8.js",
+    "service-worker.js": "/HiveApp/service-worker.js",
+    "static/css/main.4ccff3af.chunk.css.map": "/HiveApp/static/css/main.4ccff3af.chunk.css.map",
+    "static/js/2.b83b218d.chunk.js.LICENSE.txt": "/HiveApp/static/js/2.b83b218d.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.29486137.js",
+    "static/js/2.b83b218d.chunk.js",
+    "static/css/main.4ccff3af.chunk.css",
+    "static/js/main.ceb98755.chunk.js"
+  ]
+}
