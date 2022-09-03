@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 //import TicTacToeGame from './TicTacToe'
-import TicTacToeGameWithTimeTravel from './TicTacToe_TimeTravel'
+//import TicTacToeGameWithTimeTravel from './TicTacToe_TimeTravel'
+import HiveGame from './Hive'
 
-
-ReactDOM.render(<TicTacToeGameWithTimeTravel />, document.getElementById('root'));
+ReactDOM.render(<HiveGame />, document.getElementById('root'));
 
 // import * as serviceWorker from './serviceWorker';
 // If you want your app to work offline and load faster, you can change
