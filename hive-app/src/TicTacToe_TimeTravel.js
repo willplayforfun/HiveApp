@@ -1,6 +1,12 @@
 import React from "react";
 import "./TicTacToe.css"
 
+//Possible Improvements:
+// + Bold the currently selected item in the move list.
+// + Rewrite Board to use two loops to make the squares instead of hardcoding them.
+// + When someone wins, highlight the three squares that caused the win.
+// + When no one wins, display a message about the result being a draw.
+
 /*
 // because this component doesn't maintain its own state but is instead managed by Board,
 // 		it is considered a "controlled component"
